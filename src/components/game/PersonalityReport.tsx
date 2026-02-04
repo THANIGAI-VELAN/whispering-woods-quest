@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useGameStore, ElementType } from '@/store/gameStore';
 import { calculatePersonalityReport, TraitScore } from '@/utils/personalityAnalysis';
+import { HealthRecommendationPanel } from './HealthRecommendationPanel';
 
 const elementStyles: Record<ElementType, { bg: string; text: string; border: string }> = {
   water: { bg: 'bg-water/10', text: 'text-water', border: 'border-water/30' },
@@ -154,12 +155,15 @@ export function PersonalityReport() {
             </motion.div>
           </div>
           
+          {/* Health Professional Recommendations */}
+          <HealthRecommendationPanel report={report} />
+          
           {/* Play again button */}
           <motion.div
-            className="text-center"
+            className="text-center mt-12"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1.8 }}
+            transition={{ delay: 4.0 }}
           >
             <button
               onClick={resetGame}

@@ -4,6 +4,7 @@ import { StatueEncounter } from './StatueEncounter';
 import { QuestionPanel } from './QuestionPanel';
 import { PersonalityReport } from './PersonalityReport';
 import { GameHUD } from './GameHUD';
+import { MiniMap } from './MiniMap';
 import { useGameStore } from '@/store/gameStore';
 
 export function GameContainer() {
@@ -19,6 +20,7 @@ export function GameContainer() {
       {/* UI Overlays */}
       <IntroScreen />
       <GameHUD />
+      <MiniMap />
       <StatueEncounter />
       <QuestionPanel />
       <PersonalityReport />
