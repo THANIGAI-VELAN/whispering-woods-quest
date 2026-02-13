@@ -7,7 +7,7 @@ const elementStyles: Record<ElementType, { bg: string; text: string; accent: str
   water: { bg: 'bg-water/10', text: 'text-water', accent: 'border-water' },
   fire: { bg: 'bg-fire/10', text: 'text-fire', accent: 'border-fire' },
   air: { bg: 'bg-air/10', text: 'text-air', accent: 'border-air' },
-  sky: { bg: 'bg-sky/10', text: 'text-sky', accent: 'border-sky' },
+  earth: { bg: 'bg-earth/10', text: 'text-earth', accent: 'border-earth' },
   ether: { bg: 'bg-ether/10', text: 'text-ether', accent: 'border-ether' },
 };
 
@@ -75,7 +75,6 @@ export function QuestionPanel() {
           animate={{ scale: 1, y: 0, opacity: 1 }}
           exit={{ scale: 0.95, y: 20, opacity: 0 }}
         >
-          {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <span className={`text-lg font-display ${styles.text}`}>
               {currentElement.charAt(0).toUpperCase() + currentElement.slice(1)} Spirit
@@ -85,7 +84,6 @@ export function QuestionPanel() {
             </span>
           </div>
           
-          {/* Progress bar */}
           <div className="h-1 bg-muted rounded-full mb-8 overflow-hidden">
             <motion.div
               className={`h-full bg-gradient-to-r from-primary to-${currentElement}`}
@@ -95,7 +93,6 @@ export function QuestionPanel() {
             />
           </div>
           
-          {/* Question */}
           <AnimatePresence mode="wait">
             <motion.div
               key={currentQuestion.id}
@@ -108,7 +105,6 @@ export function QuestionPanel() {
                 "{currentQuestion.text}"
               </p>
               
-              {/* Rating scale */}
               <div className="space-y-4">
                 {[1, 2, 3, 4, 5].map((value) => (
                   <motion.button
@@ -132,7 +128,7 @@ export function QuestionPanel() {
                           <motion.div
                             initial={{ scale: 0 }}
                             animate={{ scale: 1 }}
-                            className={`w-4 h-4 rounded-full bg-current`}
+                            className="w-4 h-4 rounded-full bg-current"
                           />
                         )}
                       </div>
@@ -146,7 +142,6 @@ export function QuestionPanel() {
             </motion.div>
           </AnimatePresence>
           
-          {/* Submit button */}
           <motion.button
             onClick={handleSubmit}
             disabled={selectedValue === null || isTransitioning}

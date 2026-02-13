@@ -1,13 +1,16 @@
+import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useGameStore, ElementType } from '@/store/gameStore';
 import { calculatePersonalityReport, TraitScore } from '@/utils/personalityAnalysis';
+import { generateHealthRecommendations } from '@/utils/healthRecommendations';
 import { HealthRecommendationPanel } from './HealthRecommendationPanel';
+import { supabase } from '@/integrations/supabase/client';
 
 const elementStyles: Record<ElementType, { bg: string; text: string; border: string }> = {
   water: { bg: 'bg-water/10', text: 'text-water', border: 'border-water/30' },
   fire: { bg: 'bg-fire/10', text: 'text-fire', border: 'border-fire/30' },
   air: { bg: 'bg-air/10', text: 'text-air', border: 'border-air/30' },
-  sky: { bg: 'bg-sky/10', text: 'text-sky', border: 'border-sky/30' },
+  earth: { bg: 'bg-earth/10', text: 'text-earth', border: 'border-earth/30' },
   ether: { bg: 'bg-ether/10', text: 'text-ether', border: 'border-ether/30' },
 };
 
@@ -15,16 +18,55 @@ const traitElements: Record<string, ElementType> = {
   'Openness': 'water',
   'Extraversion': 'fire',
   'Agreeableness': 'air',
-  'Neuroticism': 'sky',
+  'Neuroticism': 'earth',
   'Conscientiousness': 'ether',
 };
 
 export function PersonalityReport() {
-  const { gamePhase, statueProgress, resetGame } = useGameStore();
+  const { gamePhase, statueProgress, resetGame, playerInfo } = useGameStore();
+  const savedRef = useRef(false);
   
-  if (gamePhase !== 'report') return null;
+  const report = gamePhase === 'report' ? calculatePersonalityReport(statueProgress) : null;
   
-  const report = calculatePersonalityReport(statueProgress);
+  // Save to database
+  useEffect(() => {
+    if (gamePhase !== 'report' || !report || !playerInfo || savedRef.current) return;
+    savedRef.current = true;
+    
+    const recommendations = generateHealthRecommendations(report);
+    
+    const oceanScores: Record<string, number> = {};
+    report.traits.forEach(t => {
+      oceanScores[t.trait.toLowerCase()] = t.score;
+    });
+    
+    supabase.from('game_sessions').insert([{
+      player_name: playerInfo.name,
+      player_age: playerInfo.age,
+      player_institution: playerInfo.institution,
+      ocean_scores: oceanScores as any,
+      mental_health_level: report.mentalHealthLevel,
+      confidence_level: report.confidenceLevel,
+      stress_resilience: report.stressResilience,
+      emotional_intelligence: report.emotionalIntelligence,
+      urgency_level: recommendations.urgencyLevel,
+      full_report: {
+        traits: report.traits,
+        summary: report.summary,
+        strengths: report.strengths,
+        growthAreas: report.growthAreas,
+        recommendations: {
+          primary: recommendations.primaryRecommendation.category,
+          urgency: recommendations.urgencyLevel,
+          assessment: recommendations.overallAssessment,
+        },
+      } as any,
+    }]).then(({ error }) => {
+      if (error) console.error('Failed to save session:', error);
+    });
+  }, [gamePhase, report, playerInfo]);
+  
+  if (gamePhase !== 'report' || !report) return null;
   
   return (
     <div className="fixed inset-0 z-50 bg-background overflow-y-auto">
@@ -45,6 +87,16 @@ export function PersonalityReport() {
             >
               Your Soul's Journey Revealed
             </motion.h1>
+            {playerInfo && (
+              <motion.p
+                className="text-lg text-primary font-display mb-2"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+              >
+                {playerInfo.name} • Age {playerInfo.age} • {playerInfo.institution}
+              </motion.p>
+            )}
             <motion.p
               className="text-xl text-muted-foreground font-body"
               initial={{ opacity: 0 }}
@@ -74,26 +126,10 @@ export function PersonalityReport() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
           >
-            <MetricCard
-              label="Mental Wellness"
-              value={report.mentalHealthLevel}
-              delay={0.7}
-            />
-            <MetricCard
-              label="Confidence"
-              value={report.confidenceLevel}
-              delay={0.8}
-            />
-            <MetricCard
-              label="Stress Resilience"
-              value={report.stressResilience}
-              delay={0.9}
-            />
-            <MetricCard
-              label="Emotional Intelligence"
-              value={report.emotionalIntelligence}
-              delay={1.0}
-            />
+            <MetricCard label="Mental Wellness" value={report.mentalHealthLevel} delay={0.7} />
+            <MetricCard label="Confidence" value={report.confidenceLevel} delay={0.8} />
+            <MetricCard label="Stress Resilience" value={report.stressResilience} delay={0.9} />
+            <MetricCard label="Emotional Intelligence" value={report.emotionalIntelligence} delay={1.0} />
           </motion.div>
           
           {/* Big Five Traits */}
@@ -166,7 +202,10 @@ export function PersonalityReport() {
             transition={{ delay: 4.0 }}
           >
             <button
-              onClick={resetGame}
+              onClick={() => {
+                savedRef.current = false;
+                resetGame();
+              }}
               className="px-12 py-4 text-xl font-display bg-primary text-primary-foreground 
                          rounded-lg hover:bg-primary/90 transition-all duration-300 
                          shadow-lg hover:shadow-primary/30 hover:scale-105"
@@ -216,11 +255,10 @@ function TraitCard({ trait, index }: { trait: TraitScore; index: number }) {
     'Openness': '💧',
     'Extraversion': '🔥',
     'Agreeableness': '💨',
-    'Neuroticism': '⚡',
+    'Neuroticism': '🌍',
     'Conscientiousness': '✨',
   };
   
-  // For display, rename Neuroticism to Emotional Stability (since we reversed the score)
   const displayName = trait.trait === 'Neuroticism' ? 'Emotional Stability' : trait.trait;
   
   return (
@@ -242,7 +280,6 @@ function TraitCard({ trait, index }: { trait: TraitScore; index: number }) {
             </span>
           </div>
           
-          {/* Progress bar */}
           <div className="h-2 bg-muted rounded-full mb-3 overflow-hidden">
             <motion.div
               className={`h-full ${styles.bg.replace('/10', '')}`}

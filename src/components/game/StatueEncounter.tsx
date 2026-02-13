@@ -6,7 +6,7 @@ const elementStyles: Record<ElementType, { bg: string; text: string; glow: strin
   water: { bg: 'bg-water/20', text: 'text-water', glow: 'glow-water' },
   fire: { bg: 'bg-fire/20', text: 'text-fire', glow: 'glow-fire' },
   air: { bg: 'bg-air/20', text: 'text-air', glow: 'glow-air' },
-  sky: { bg: 'bg-sky/20', text: 'text-sky', glow: 'glow-sky' },
+  earth: { bg: 'bg-earth/20', text: 'text-earth', glow: 'glow-earth' },
   ether: { bg: 'bg-ether/20', text: 'text-ether', glow: 'glow-ether' },
 };
 
@@ -58,7 +58,7 @@ export function StatueEncounter() {
               {description.sound}
             </p>
             
-            <div className={`p-6 rounded-lg bg-card/50 mb-8 border border-border/30`}>
+            <div className="p-6 rounded-lg bg-card/50 mb-8 border border-border/30">
               <p className={`text-xl font-body leading-relaxed ${styles.text}`}>
                 "{clue.found}"
               </p>
@@ -77,7 +77,7 @@ function ElementIcon({ element }: { element: ElementType }) {
     water: '💧',
     fire: '🔥',
     air: '💨',
-    sky: '⚡',
+    earth: '🌍',
     ether: '✨',
   };
   
@@ -89,8 +89,6 @@ function ElementIcon({ element }: { element: ElementType }) {
 }
 
 function BeginQuestionsButton({ element }: { element: ElementType }) {
-  const styles = elementStyles[element];
-  
   return (
     <motion.button
       onClick={() => {
@@ -98,9 +96,9 @@ function BeginQuestionsButton({ element }: { element: ElementType }) {
       }}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.98 }}
-      className={`px-10 py-4 text-lg font-display rounded-lg transition-all duration-300
+      className="px-10 py-4 text-lg font-display rounded-lg transition-all duration-300
                   bg-primary text-primary-foreground hover:bg-primary/90
-                  shadow-lg hover:shadow-xl`}
+                  shadow-lg hover:shadow-xl"
     >
       Begin the Questions
     </motion.button>

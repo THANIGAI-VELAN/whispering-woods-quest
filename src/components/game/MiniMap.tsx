@@ -5,7 +5,7 @@ const statuePositions: Record<ElementType, { x: number; z: number }> = {
   water: { x: 18, z: 0 },
   fire: { x: 0, z: 18 },
   air: { x: -18, z: 0 },
-  sky: { x: 0, z: -18 },
+  earth: { x: 0, z: -18 },
   ether: { x: 0, z: 0 },
 };
 
@@ -13,7 +13,7 @@ const elementColors: Record<ElementType, string> = {
   water: 'bg-water',
   fire: 'bg-fire',
   air: 'bg-air',
-  sky: 'bg-sky',
+  earth: 'bg-earth',
   ether: 'bg-ether',
 };
 
@@ -21,7 +21,7 @@ const elementIcons: Record<ElementType, string> = {
   water: '💧',
   fire: '🔥',
   air: '💨',
-  sky: '⚡',
+  earth: '🌍',
   ether: '✨',
 };
 
@@ -30,15 +30,13 @@ export function MiniMap() {
   
   if (gamePhase !== 'exploring') return null;
   
-  // Map scale: game world is roughly -25 to 25, map is 160px
-  const mapSize = 160;
-  const worldSize = 50; // -25 to 25
-  const scale = mapSize / worldSize;
+  const mapSize = 180;
+  const worldRange = 80; // -40 to 40 matches PlayerController bounds
+  const scale = mapSize / worldRange;
   
-  // Convert world position to map position
   const worldToMap = (x: number, z: number) => ({
-    x: (x + worldSize / 2) * scale,
-    y: (z + worldSize / 2) * scale,
+    x: Math.max(4, Math.min(mapSize - 4, (x + worldRange / 2) * scale)),
+    y: Math.max(4, Math.min(mapSize - 4, (z + worldRange / 2) * scale)),
   });
   
   const playerMapPos = worldToMap(playerPosition.x, playerPosition.z);
@@ -55,7 +53,6 @@ export function MiniMap() {
           Forest Map
         </div>
         
-        {/* Map container */}
         <div 
           className="relative rounded-lg overflow-hidden border border-border/50"
           style={{ width: mapSize, height: mapSize, background: 'hsl(160 30% 8%)' }}
@@ -79,7 +76,6 @@ export function MiniMap() {
             const isCompleted = statueProgress[element].completed;
             const pos = worldToMap(statuePositions[element].x, statuePositions[element].z);
             
-            // Show statue if discovered or if it's the current target
             const shouldShow = isDiscovered || index === currentStatueIndex;
             
             if (!shouldShow) return null;
@@ -98,19 +94,19 @@ export function MiniMap() {
                 transition={{ delay: 0.1 * index }}
               >
                 {isCompleted ? (
-                  <div className={`w-4 h-4 rounded-full ${elementColors[element]} flex items-center justify-center text-[8px]`}>
+                  <div className={`w-5 h-5 rounded-full ${elementColors[element]} flex items-center justify-center text-[9px]`}>
                     ✓
                   </div>
                 ) : isActive && !isDiscovered ? (
                   <motion.div
-                    className={`w-3 h-3 rounded-full border-2 border-dashed`}
+                    className="w-4 h-4 rounded-full border-2 border-dashed"
                     style={{ borderColor: `hsl(var(--${element}))` }}
                     animate={{ rotate: 360 }}
                     transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
                   />
                 ) : (
                   <div 
-                    className={`w-4 h-4 rounded-full ${elementColors[element]} pulse-glow flex items-center justify-center text-[8px]`}
+                    className={`w-5 h-5 rounded-full ${elementColors[element]} pulse-glow flex items-center justify-center text-[9px]`}
                   >
                     {elementIcons[element]}
                   </div>
@@ -119,35 +115,17 @@ export function MiniMap() {
             );
           })}
           
-          {/* Player */}
+          {/* Player dot */}
           <motion.div
-            className="absolute w-3 h-3 bg-primary rounded-full border-2 border-primary-foreground shadow-lg"
+            className="absolute w-3.5 h-3.5 bg-primary rounded-full border-2 border-primary-foreground shadow-lg"
             style={{
               left: playerMapPos.x,
               top: playerMapPos.y,
               transform: 'translate(-50%, -50%)',
-              boxShadow: '0 0 10px hsl(var(--primary))',
+              boxShadow: '0 0 12px hsl(var(--primary))',
             }}
-            animate={{
-              scale: [1, 1.2, 1],
-            }}
-            transition={{
-              duration: 1.5,
-              repeat: Infinity,
-            }}
-          />
-          
-          {/* Player direction indicator */}
-          <div
-            className="absolute w-0 h-0"
-            style={{
-              left: playerMapPos.x,
-              top: playerMapPos.y - 8,
-              transform: 'translate(-50%, -50%)',
-              borderLeft: '4px solid transparent',
-              borderRight: '4px solid transparent',
-              borderBottom: '6px solid hsl(var(--primary))',
-            }}
+            animate={{ scale: [1, 1.3, 1] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
           />
         </div>
         

@@ -62,7 +62,7 @@ const elementToTrait: Record<ElementType, string> = {
   water: 'openness',
   fire: 'extraversion',
   air: 'agreeableness',
-  sky: 'neuroticism',
+  earth: 'neuroticism',
   ether: 'conscientiousness',
 };
 
@@ -79,25 +79,22 @@ export function calculatePersonalityReport(
 ): PersonalityReport {
   const traits: TraitScore[] = [];
   
-  // Calculate each trait score
   for (const element of Object.keys(statueProgress) as ElementType[]) {
     const progress = statueProgress[element];
     const trait = elementToTrait[element];
     
-    // Calculate average score from answers (1-5 scale → 0-100)
     let totalScore = 0;
     const answers = progress.questionsAnswered;
     
     if (answers.length > 0) {
       for (const answer of answers) {
-        // For neuroticism, we reverse the score to get emotional stability
         if (trait === 'neuroticism') {
-          totalScore += (6 - answer.value); // Reverse: 5→1, 4→2, etc.
+          totalScore += (6 - answer.value);
         } else {
           totalScore += answer.value;
         }
       }
-      totalScore = ((totalScore / answers.length) - 1) * 25; // Convert 1-5 to 0-100
+      totalScore = ((totalScore / answers.length) - 1) * 25;
     }
     
     const level = getLevel(totalScore);
@@ -111,45 +108,28 @@ export function calculatePersonalityReport(
     });
   }
   
-  // Calculate derived metrics
   const openness = traits.find(t => t.trait === 'Openness')?.score || 50;
   const extraversion = traits.find(t => t.trait === 'Extraversion')?.score || 50;
   const agreeableness = traits.find(t => t.trait === 'Agreeableness')?.score || 50;
-  const emotionalStability = traits.find(t => t.trait === 'Neuroticism')?.score || 50; // Already reversed
+  const emotionalStability = traits.find(t => t.trait === 'Neuroticism')?.score || 50;
   const conscientiousness = traits.find(t => t.trait === 'Conscientiousness')?.score || 50;
   
-  // Mental Health Level: weighted average emphasizing emotional stability
   const mentalHealthLevel = Math.round(
-    (emotionalStability * 0.35) +
-    (agreeableness * 0.25) +
-    (conscientiousness * 0.20) +
-    (extraversion * 0.10) +
-    (openness * 0.10)
+    (emotionalStability * 0.35) + (agreeableness * 0.25) + (conscientiousness * 0.20) + (extraversion * 0.10) + (openness * 0.10)
   );
   
-  // Confidence Level: based on extraversion and emotional stability
   const confidenceLevel = Math.round(
-    (extraversion * 0.45) +
-    (emotionalStability * 0.35) +
-    (conscientiousness * 0.20)
+    (extraversion * 0.45) + (emotionalStability * 0.35) + (conscientiousness * 0.20)
   );
   
-  // Stress Resilience: emotional stability and conscientiousness
   const stressResilience = Math.round(
-    (emotionalStability * 0.50) +
-    (conscientiousness * 0.30) +
-    (openness * 0.20)
+    (emotionalStability * 0.50) + (conscientiousness * 0.30) + (openness * 0.20)
   );
   
-  // Emotional Intelligence: agreeableness, openness, and some extraversion
   const emotionalIntelligence = Math.round(
-    (agreeableness * 0.40) +
-    (openness * 0.30) +
-    (emotionalStability * 0.20) +
-    (extraversion * 0.10)
+    (agreeableness * 0.40) + (openness * 0.30) + (emotionalStability * 0.20) + (extraversion * 0.10)
   );
   
-  // Generate strengths
   const strengths: string[] = [];
   const growthAreas: string[] = [];
   
@@ -161,7 +141,6 @@ export function calculatePersonalityReport(
     }
   }
   
-  // Ensure at least one strength and growth area
   if (strengths.length === 0) {
     const highestTrait = traits.reduce((a, b) => a.score > b.score ? a : b);
     strengths.push(getStrength(highestTrait.trait, highestTrait.score));
@@ -172,7 +151,6 @@ export function calculatePersonalityReport(
     growthAreas.push(getGrowthArea(lowestTrait.trait, lowestTrait.score));
   }
   
-  // Generate summary
   const summary = generateSummary(traits, mentalHealthLevel, confidenceLevel);
   
   return {

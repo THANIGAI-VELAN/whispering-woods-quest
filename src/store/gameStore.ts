@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type ElementType = 'water' | 'fire' | 'air' | 'sky' | 'ether';
+export type ElementType = 'water' | 'fire' | 'air' | 'earth' | 'ether';
 
 export interface Answer {
   questionId: string;
@@ -13,8 +13,14 @@ export interface StatueProgress {
   completed: boolean;
 }
 
+export interface PlayerInfo {
+  name: string;
+  age: number;
+  institution: string;
+}
+
 interface GameState {
-  gamePhase: 'intro' | 'exploring' | 'statue' | 'questions' | 'report';
+  gamePhase: 'intro' | 'player-info' | 'exploring' | 'statue' | 'questions' | 'clue-reveal' | 'report';
   currentStatueIndex: number;
   statueOrder: ElementType[];
   statueProgress: Record<ElementType, StatueProgress>;
@@ -22,13 +28,17 @@ interface GameState {
   playerPosition: { x: number; z: number };
   showClue: boolean;
   clueText: string;
+  playerInfo: PlayerInfo | null;
   
   // Actions
   startGame: () => void;
+  setPlayerInfo: (info: PlayerInfo) => void;
+  enterForest: () => void;
   findStatue: (element: ElementType) => void;
   answerQuestion: (questionId: string, value: number) => void;
   nextQuestion: () => void;
   completeStatue: () => void;
+  continueFromClue: () => void;
   movePlayer: (x: number, z: number) => void;
   showStatueClue: (clue: string) => void;
   hideClue: () => void;
@@ -40,21 +50,26 @@ const initialStatueProgress: Record<ElementType, StatueProgress> = {
   water: { found: false, questionsAnswered: [], completed: false },
   fire: { found: false, questionsAnswered: [], completed: false },
   air: { found: false, questionsAnswered: [], completed: false },
-  sky: { found: false, questionsAnswered: [], completed: false },
+  earth: { found: false, questionsAnswered: [], completed: false },
   ether: { found: false, questionsAnswered: [], completed: false },
 };
 
 export const useGameStore = create<GameState>((set, get) => ({
   gamePhase: 'intro',
   currentStatueIndex: 0,
-  statueOrder: ['water', 'fire', 'air', 'sky', 'ether'],
+  statueOrder: ['water', 'fire', 'air', 'earth', 'ether'],
   statueProgress: { ...initialStatueProgress },
   currentQuestionIndex: 0,
   playerPosition: { x: 0, z: 0 },
   showClue: false,
   clueText: '',
+  playerInfo: null,
 
-  startGame: () => set({ gamePhase: 'exploring' }),
+  startGame: () => set({ gamePhase: 'player-info' }),
+
+  setPlayerInfo: (info) => set({ playerInfo: info }),
+
+  enterForest: () => set({ gamePhase: 'exploring' }),
 
   findStatue: (element) => {
     const state = get();
@@ -106,10 +121,17 @@ export const useGameStore = create<GameState>((set, get) => ({
         ...state.statueProgress,
         [currentElement]: { ...state.statueProgress[currentElement], completed: true },
       },
-      currentStatueIndex: isLastStatue ? state.currentStatueIndex : state.currentStatueIndex + 1,
       currentQuestionIndex: 0,
-      gamePhase: isLastStatue ? 'report' : 'exploring',
+      gamePhase: isLastStatue ? 'report' : 'clue-reveal',
     }));
+  },
+
+  continueFromClue: () => {
+    const state = get();
+    set({
+      currentStatueIndex: state.currentStatueIndex + 1,
+      gamePhase: 'exploring',
+    });
   },
 
   movePlayer: (x, z) => set({ playerPosition: { x, z } }),
@@ -128,5 +150,6 @@ export const useGameStore = create<GameState>((set, get) => ({
     playerPosition: { x: 0, z: 0 },
     showClue: false,
     clueText: '',
+    playerInfo: null,
   }),
 }));

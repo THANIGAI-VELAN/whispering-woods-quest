@@ -143,7 +143,6 @@ function analyzeTraits(traits: TraitScore[]): {
   for (const trait of traits) {
     const traitName = trait.trait.toLowerCase();
     
-    // Analyze each trait for concerns and strengths
     if (trait.score < 30) {
       if (traitName === 'openness') {
         concerns.push('Limited openness may indicate rigid thinking patterns or avoidance of new experiences that could impact personal growth and adaptability to change.');
@@ -207,119 +206,83 @@ function selectProfessionals(
   const agreeableness = report.traits.find(t => t.trait === 'Agreeableness')?.score || 50;
   const conscientiousness = report.traits.find(t => t.trait === 'Conscientiousness')?.score || 50;
   
-  // Primary mental health support based on severity
   if (urgency === 'urgent' || report.mentalHealthLevel < 40) {
     categories.push({
       category: 'Comprehensive Mental Health Care',
       icon: '🏥',
-      professionals: [
-        professionalDatabase.psychiatrist,
-        professionalDatabase.clinicalPsychologist,
-      ],
+      professionals: [professionalDatabase.psychiatrist, professionalDatabase.clinicalPsychologist],
       reasoning: 'Your assessment indicates significant emotional challenges that would benefit from comprehensive evaluation by mental health specialists who can provide thorough assessment, accurate diagnosis, and develop an integrated treatment plan combining therapeutic and medical approaches as needed.',
     });
   }
   
-  // Emotional regulation support
   if (emotionalStability < 40) {
     categories.push({
       category: 'Emotional Regulation Support',
       icon: '🧠',
-      professionals: [
-        professionalDatabase.cognitiveBehavioralSpecialist,
-        professionalDatabase.mindfulnessInstructor,
-      ],
+      professionals: [professionalDatabase.cognitiveBehavioralSpecialist, professionalDatabase.mindfulnessInstructor],
       reasoning: 'Your responses suggest heightened emotional sensitivity that could benefit from specialized therapeutic approaches focused on developing emotional regulation skills, identifying thought patterns that contribute to distress, and building practical coping strategies.',
     });
   }
   
-  // Social connection and relationship support
   if (extraversion < 35 || agreeableness < 35) {
     categories.push({
       category: 'Social and Relationship Support',
       icon: '👥',
-      professionals: [
-        professionalDatabase.licensedTherapist,
-        professionalDatabase.groupTherapyFacilitator,
-      ],
+      professionals: [professionalDatabase.licensedTherapist, professionalDatabase.groupTherapyFacilitator],
       reasoning: 'Your personality profile suggests potential benefits from exploring interpersonal dynamics, building social skills, or addressing patterns that may affect your relationships. Therapists specializing in relational approaches can help navigate these areas.',
     });
   }
   
-  // Stress and lifestyle management
   if (report.stressResilience < 50) {
     categories.push({
       category: 'Stress Management and Resilience',
       icon: '🌿',
-      professionals: [
-        professionalDatabase.stressManagementSpecialist,
-        professionalDatabase.behavioralHealthCoach,
-      ],
+      professionals: [professionalDatabase.stressManagementSpecialist, professionalDatabase.behavioralHealthCoach],
       reasoning: 'Your stress resilience scores indicate that developing stronger stress management techniques and building sustainable healthy habits could significantly improve your overall well-being and ability to handle life challenges.',
     });
   }
   
-  // Cognitive and functional concerns
   if (conscientiousness < 40 || openness < 30) {
     categories.push({
       category: 'Cognitive and Functional Support',
       icon: '📋',
-      professionals: [
-        professionalDatabase.occupationalTherapist,
-        professionalDatabase.counselingPsychologist,
-      ],
+      professionals: [professionalDatabase.occupationalTherapist, professionalDatabase.counselingPsychologist],
       reasoning: 'Your assessment suggests potential areas for growth in organization, planning, or adapting to new situations. These professionals can help develop practical strategies for improving daily functioning and exploring personal development.',
     });
   }
   
-  // Sleep and neurological considerations
   if (report.mentalHealthLevel < 45 && report.stressResilience < 45) {
     categories.push({
       category: 'Physical Health Considerations',
       icon: '💤',
-      professionals: [
-        professionalDatabase.sleepSpecialist,
-        professionalDatabase.neurologist,
-      ],
+      professionals: [professionalDatabase.sleepSpecialist, professionalDatabase.neurologist],
       reasoning: 'When mental health and stress resilience are both impacted, it is important to consider physical factors like sleep quality and neurological health that can significantly affect psychological well-being and cognitive function.',
     });
   }
   
-  // Creative and alternative approaches
   if (urgency === 'routine' && openness >= 50) {
     categories.push({
       category: 'Creative and Holistic Approaches',
       icon: '🎨',
-      professionals: [
-        professionalDatabase.artTherapist,
-        professionalDatabase.mindfulnessInstructor,
-      ],
+      professionals: [professionalDatabase.artTherapist, professionalDatabase.mindfulnessInstructor],
       reasoning: 'Your openness to new experiences suggests you may benefit from and engage well with creative therapeutic approaches that allow for self-expression and exploration beyond traditional talk therapy.',
     });
   }
   
-  // Career and purpose alignment
   if (report.confidenceLevel < 45) {
     categories.push({
       category: 'Purpose and Self-Development',
       icon: '🎯',
-      professionals: [
-        professionalDatabase.careerCounselor,
-        professionalDatabase.counselingPsychologist,
-      ],
+      professionals: [professionalDatabase.careerCounselor, professionalDatabase.counselingPsychologist],
       reasoning: 'Lower confidence levels may be connected to questions about purpose, direction, or alignment between your values and daily life. Exploring these areas can lead to greater self-assurance and life satisfaction.',
     });
   }
   
-  // General counseling for moderate concerns
   if (categories.length === 0 || urgency === 'routine') {
     categories.push({
       category: 'General Mental Wellness Support',
       icon: '💚',
-      professionals: [
-        professionalDatabase.mentalHealthCounselor,
-        professionalDatabase.behavioralHealthCoach,
-      ],
+      professionals: [professionalDatabase.mentalHealthCounselor, professionalDatabase.behavioralHealthCoach],
       reasoning: 'Proactive mental health support can help maintain psychological well-being, build resilience, and address minor concerns before they develop into larger issues. Regular check-ins with a mental health professional benefit everyone.',
     });
   }
@@ -333,9 +296,7 @@ function generateGeneralAdvice(
 ): string[] {
   const advice: string[] = [];
   
-  // Universal advice
   advice.push('Maintain consistent sleep habits by going to bed and waking up at regular times, as quality sleep is foundational to mental health and emotional regulation.');
-  
   advice.push('Engage in regular physical activity that you enjoy, as exercise has been consistently shown to reduce anxiety and depression while improving overall mood and cognitive function.');
   
   if (report.emotionalIntelligence < 50) {
@@ -350,7 +311,6 @@ function generateGeneralAdvice(
     advice.push('Keep a daily record of small accomplishments and positive experiences to build self-efficacy and counteract negative self-perceptions over time.');
   }
   
-  // Urgency-specific advice
   if (urgency === 'urgent') {
     advice.push('Please prioritize scheduling an appointment with a mental health professional soon, as addressing significant concerns early leads to better outcomes and prevents escalation.');
   } else if (urgency === 'moderate') {
@@ -358,7 +318,6 @@ function generateGeneralAdvice(
   }
   
   advice.push('Build and maintain social connections, even if brief, as social support is one of the strongest protective factors for mental health across all personality types.');
-  
   advice.push('Limit exposure to negative news and social media when feeling overwhelmed, and instead engage in activities that bring you genuine enjoyment and relaxation.');
   
   return advice;
@@ -380,7 +339,6 @@ export function generateHealthRecommendations(
   
   const generalAdvice = generateGeneralAdvice(report, urgency);
   
-  // Generate overall assessment
   let overallAssessment = '';
   
   if (urgency === 'urgent') {
