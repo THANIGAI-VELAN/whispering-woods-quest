@@ -44,13 +44,13 @@ export function IntroScreen() {
             transition={{ delay: 0.9, duration: 0.8 }}
           >
             <p className="text-lg font-body italic">
-              Find the statues. Answer truthfully. Discover yourself.
+              Decode the riddles. Find the statues. Discover yourself.
             </p>
             <div className="flex justify-center gap-6 text-sm">
               <span className="text-water">💧 Water</span>
               <span className="text-fire">🔥 Fire</span>
               <span className="text-air">💨 Air</span>
-              <span className="text-sky">⚡ Sky</span>
+              <span className="text-earth">🌍 Earth</span>
               <span className="text-ether">✨ Ether</span>
             </div>
           </motion.div>
@@ -76,7 +76,7 @@ export function IntroScreen() {
             animate={{ opacity: 1 }}
             transition={{ delay: 1.5, duration: 0.8 }}
           >
-            Use WASD or Arrow keys to move • Find the glowing statues
+            Use WASD or Arrow keys to move • Solve riddles to find the glowing statues
           </motion.p>
         </div>
       </motion.div>

@@ -14,7 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      game_sessions: {
+        Row: {
+          confidence_level: number | null
+          created_at: string
+          emotional_intelligence: number | null
+          full_report: Json | null
+          id: string
+          mental_health_level: number | null
+          ocean_scores: Json | null
+          player_age: number
+          player_institution: string
+          player_name: string
+          stress_resilience: number | null
+          urgency_level: string | null
+        }
+        Insert: {
+          confidence_level?: number | null
+          created_at?: string
+          emotional_intelligence?: number | null
+          full_report?: Json | null
+          id?: string
+          mental_health_level?: number | null
+          ocean_scores?: Json | null
+          player_age: number
+          player_institution: string
+          player_name: string
+          stress_resilience?: number | null
+          urgency_level?: string | null
+        }
+        Update: {
+          confidence_level?: number | null
+          created_at?: string
+          emotional_intelligence?: number | null
+          full_report?: Json | null
+          id?: string
+          mental_health_level?: number | null
+          ocean_scores?: Json | null
+          player_age?: number
+          player_institution?: string
+          player_name?: string
+          stress_resilience?: number | null
+          urgency_level?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

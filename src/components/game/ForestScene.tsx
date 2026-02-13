@@ -5,12 +5,11 @@ import { ElementalStatue } from './ElementalStatue';
 import { PlayerController } from './PlayerController';
 import { useGameStore, ElementType } from '@/store/gameStore';
 
-// Statues positioned at cardinal directions for easy navigation
 const statuePositions: Record<ElementType, [number, number, number]> = {
   water: [18, 0, 0],      // East
   fire: [0, 0, 18],       // South
   air: [-18, 0, 0],       // West
-  sky: [0, 0, -18],       // North
+  earth: [0, 0, -18],     // North
   ether: [0, 0, 0],       // Center (final)
 };
 
@@ -29,7 +28,6 @@ export function ForestScene() {
           <ForestEnvironment />
           <PlayerController />
           
-          {/* Render statues */}
           {statueOrder.map((element, index) => (
             <ElementalStatue
               key={element}

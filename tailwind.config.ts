@@ -64,9 +64,9 @@ export default {
           DEFAULT: "hsl(var(--air))",
           glow: "hsl(var(--air-glow))",
         },
-        sky: {
-          DEFAULT: "hsl(var(--sky))",
-          glow: "hsl(var(--sky-glow))",
+        earth: {
+          DEFAULT: "hsl(var(--earth))",
+          glow: "hsl(var(--earth-glow))",
         },
         ether: {
           DEFAULT: "hsl(var(--ether))",

@@ -46,8 +46,8 @@
     --fire-glow: 35 100% 65%;
     --air: 180 30% 75%;
     --air-glow: 180 40% 85%;
-    --sky: 220 70% 55%;
-    --sky-glow: 230 80% 70%;
+    --earth: 40 70% 35%;
+    --earth-glow: 45 80% 50%;
     --ether: 270 60% 60%;
     --ether-glow: 280 70% 75%;
 
@@ -103,9 +103,9 @@
     box-shadow: var(--glow-medium) hsl(var(--air-glow) / 0.3);
   }
 
-  .glow-sky {
-    text-shadow: var(--glow-soft) hsl(var(--sky-glow));
-    box-shadow: var(--glow-medium) hsl(var(--sky-glow) / 0.3);
+  .glow-earth {
+    text-shadow: var(--glow-soft) hsl(var(--earth-glow));
+    box-shadow: var(--glow-medium) hsl(var(--earth-glow) / 0.3);
   }
 
   .glow-ether {

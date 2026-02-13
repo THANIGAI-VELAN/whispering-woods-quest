@@ -1,4 +1,4 @@
-import { useRef, useMemo, useState, useEffect } from 'react';
+import { useRef, useMemo, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Text } from '@react-three/drei';
 import * as THREE from 'three';
@@ -15,7 +15,7 @@ const elementColors: Record<ElementType, string> = {
   water: '#4dc3ff',
   fire: '#ff6b35',
   air: '#b8d4e3',
-  sky: '#5b7fff',
+  earth: '#8B6914',
   ether: '#a855f7',
 };
 
@@ -23,16 +23,15 @@ const elementEmissive: Record<ElementType, string> = {
   water: '#0066aa',
   fire: '#ff3300',
   air: '#88aabb',
-  sky: '#3344ff',
+  earth: '#5a4010',
   ether: '#7722bb',
 };
 
 export function ElementalStatue({ element, position, isActive, isCompleted }: StatueProps) {
   const groupRef = useRef<THREE.Group>(null);
   const [isNearby, setIsNearby] = useState(false);
-  const { findStatue, playerPosition, showStatueClue } = useGameStore();
+  const { findStatue, playerPosition } = useGameStore();
   
-  // Check distance to player
   useFrame(() => {
     if (!isActive || isCompleted) return;
     
@@ -50,7 +49,6 @@ export function ElementalStatue({ element, position, isActive, isCompleted }: St
       findStatue(element);
     }
     
-    // Floating animation
     if (groupRef.current) {
       groupRef.current.position.y = position[1] + Math.sin(Date.now() * 0.001) * 0.1;
     }
@@ -66,13 +64,11 @@ export function ElementalStatue({ element, position, isActive, isCompleted }: St
   
   return (
     <group ref={groupRef} position={position}>
-      {/* Base pedestal */}
       <mesh position={[0, 0.5, 0]} castShadow>
         <cylinderGeometry args={[1.2, 1.5, 1, 8]} />
         <meshStandardMaterial color="#1a1a1a" roughness={0.3} />
       </mesh>
       
-      {/* Main statue body */}
       <mesh position={[0, 2, 0]} castShadow>
         <cylinderGeometry args={[0.6, 0.8, 2, 8]} />
         <meshStandardMaterial
@@ -84,7 +80,6 @@ export function ElementalStatue({ element, position, isActive, isCompleted }: St
         />
       </mesh>
       
-      {/* Top orb */}
       <mesh position={[0, 3.5, 0]}>
         <sphereGeometry args={[0.5, 32, 32]} />
         <meshStandardMaterial
@@ -98,7 +93,6 @@ export function ElementalStatue({ element, position, isActive, isCompleted }: St
         />
       </mesh>
       
-      {/* Point light */}
       <pointLight
         position={[0, 3.5, 0]}
         color={color}
@@ -106,10 +100,8 @@ export function ElementalStatue({ element, position, isActive, isCompleted }: St
         distance={isActive ? 15 : 5}
       />
       
-      {/* Element-specific effects */}
       {isActive && <ElementEffect element={element} isNearby={isNearby} />}
       
-      {/* Label */}
       {isNearby && (
         <Text
           position={[0, 5, 0]}
@@ -153,36 +145,30 @@ function ElementEffect({ element, isNearby }: { element: ElementType; isNearby: 
       
       switch (element) {
         case 'water':
-          // Flowing downward
           positions[i3 + 1] -= 0.03;
           if (positions[i3 + 1] < 0) positions[i3 + 1] = 3;
           positions[i3] += Math.sin(time + i) * 0.01;
           break;
         case 'fire':
-          // Rising upward
           positions[i3 + 1] += 0.05;
           if (positions[i3 + 1] > 4) positions[i3 + 1] = 1;
           positions[i3] += Math.sin(time * 2 + i) * 0.02;
           break;
         case 'air':
-          // Swirling
           const angle = time * 0.5 + i * 0.1;
           const radius = 1 + Math.sin(time + i) * 0.5;
           positions[i3] = Math.cos(angle) * radius;
           positions[i3 + 2] = Math.sin(angle) * radius;
           positions[i3 + 1] = 2 + Math.sin(time * 2 + i) * 0.5;
           break;
-        case 'sky':
-          // Storm clouds
-          positions[i3] += Math.sin(time + i) * 0.03;
-          positions[i3 + 2] += Math.cos(time + i) * 0.03;
-          if (Math.random() < 0.01) {
-            positions[i3] = (Math.random() - 0.5) * 4;
-            positions[i3 + 2] = (Math.random() - 0.5) * 4;
-          }
+        case 'earth':
+          // Rising dust and trembling ground particles
+          positions[i3 + 1] += 0.01;
+          if (positions[i3 + 1] > 2) positions[i3 + 1] = 0;
+          positions[i3] += Math.sin(time * 3 + i) * 0.015;
+          positions[i3 + 2] += Math.cos(time * 3 + i) * 0.015;
           break;
         case 'ether':
-          // Cosmic orbit
           const etherAngle = time * 0.3 + i * 0.05;
           const etherRadius = 0.5 + (i / particleCount) * 2;
           positions[i3] = Math.cos(etherAngle) * etherRadius;
