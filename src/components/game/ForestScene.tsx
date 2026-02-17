@@ -3,6 +3,7 @@ import { Suspense } from 'react';
 import { ForestEnvironment } from './ForestEnvironment';
 import { ElementalStatue } from './ElementalStatue';
 import { PlayerController } from './PlayerController';
+import { ForestAnimals } from './ForestAnimals';
 import { useGameStore, ElementType } from '@/store/gameStore';
 
 const statuePositions: Record<ElementType, [number, number, number]> = {
@@ -27,16 +28,22 @@ export function ForestScene() {
         <Suspense fallback={null}>
           <ForestEnvironment />
           <PlayerController />
+          <ForestAnimals />
           
-          {statueOrder.map((element, index) => (
-            <ElementalStatue
-              key={element}
-              element={element}
-              position={statuePositions[element]}
-              isActive={index <= currentStatueIndex}
-              isCompleted={statueProgress[element].completed}
-            />
-          ))}
+          {/* Only show statues for non-cinematic elements (water/fire use cinematics) */}
+          {statueOrder.map((element, index) => {
+            // For water and fire, don't show the 3D statue in forest — handled by cinematic
+            if (element === 'water' || element === 'fire') return null;
+            return (
+              <ElementalStatue
+                key={element}
+                element={element}
+                position={statuePositions[element]}
+                isActive={index <= currentStatueIndex}
+                isCompleted={statueProgress[element].completed}
+              />
+            );
+          })}
         </Suspense>
       </Canvas>
     </div>

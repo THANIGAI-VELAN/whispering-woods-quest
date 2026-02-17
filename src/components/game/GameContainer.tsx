@@ -7,6 +7,8 @@ import { PersonalityReport } from './PersonalityReport';
 import { GameHUD } from './GameHUD';
 import { MiniMap } from './MiniMap';
 import { ClueReveal } from './ClueReveal';
+import { WaterChapterCinematic } from './WaterChapterCinematic';
+import { FireChapterCinematic } from './FireChapterCinematic';
 import { useGameStore } from '@/store/gameStore';
 
 export function GameContainer() {
@@ -28,6 +30,10 @@ export function GameContainer() {
       <QuestionPanel />
       <ClueReveal />
       <PersonalityReport />
+      
+      {/* Cinematic Overlays */}
+      <WaterChapterCinematic />
+      <FireChapterCinematic />
       
       {/* Audio indicator */}
       {gamePhase === 'exploring' && (

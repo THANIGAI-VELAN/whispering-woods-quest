@@ -55,8 +55,8 @@ export const questions: Record<ElementType, Question[]> = {
 
 // Storyline riddles to find each statue
 export const statueRiddles: Record<ElementType, string> = {
-  water: 'Every creature in this forest must drink to survive. Follow the trail where animals gather, where roots run deep toward moisture. The source of all life flows somewhere to the east...',
-  fire: 'Where there is life, there is warmth. Look for the scorched earth, the place where lightning once struck and left its mark. The creatures here fear it, yet the forest needs it to renew. Seek the glow to the south...',
+  water: 'Look around you... every creature in this forest needs water to survive. Watch them carefully — they will lead you to the source of all life.',
+  fire: 'The Water Spirit whispered of warmth and flame. Find two stones on the forest floor and strike them together. Follow the fire to the south...',
   air: 'The birds know this secret — they ride invisible rivers through the canopy. Where the leaves dance without being touched and the ancient trees whisper, the breath of the forest awaits in the west...',
   earth: 'Beneath your feet lies the oldest element. Where the ground trembles with ancient memory, where roots grip stone and mountains once stood tall. Seek the place where the forest floor remembers in the north...',
   ether: 'You have found water, fire, air, and earth. Now seek what connects them all — the space between, the silence within. At the very heart of the forest, where all paths converge, the infinite awaits...',
@@ -64,7 +64,7 @@ export const statueRiddles: Record<ElementType, string> = {
 
 // Clues given AFTER answering questions to find the NEXT statue
 export const nextStatueClues: Record<ElementType, string> = {
-  water: '🔥 The Water Spirit whispers: "You have proven your depth. Now seek the opposite — where the forest burns brightest, where passion ignites the undergrowth. Follow the warmth south, where no water dares to flow..."',
+  water: '🔥 The Water Spirit whispers: "You have proven your depth. Now seek the opposite — take two stones from the earth and strike them together. The spark will guide you south, to an ancient city consumed by flame..."',
   fire: '💨 The Fire Spirit roars: "Your flame burns true! But fire needs air to breathe. Seek the western wind, where the canopy opens and the breeze carries secrets only the gentlest souls can hear..."',
   air: '🌍 The Air Spirit sighs: "You have felt my breath. Now ground yourself. The north holds something ancient — stone and soil, the weight of emotion buried deep. Where tremors echo beneath the roots, earth speaks..."',
   earth: '✨ The Earth Spirit rumbles: "You have touched the foundation. Now look beyond — to the center, where all elements converge. The final truth lies in the infinite space between worlds. Seek the heart of the forest..."',
