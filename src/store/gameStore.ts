@@ -2,6 +2,9 @@ import { create } from 'zustand';
 
 export type ElementType = 'water' | 'fire' | 'air' | 'earth' | 'ether';
 
+export type WaterPhase = 'forest_roam' | 'animals_migrate' | 'ocean_approach' | 'cinematic_ocean' | 'cinematic_underwater' | 'cinematic_kumari' | 'statue_encounter';
+export type FirePhase = 'exploring' | 'rubbing_stones' | 'cinematic_fire' | 'cinematic_madurai' | 'statue_encounter';
+
 export interface Answer {
   questionId: string;
   value: number; // 1-5 scale
@@ -20,7 +23,7 @@ export interface PlayerInfo {
 }
 
 interface GameState {
-  gamePhase: 'intro' | 'player-info' | 'exploring' | 'statue' | 'questions' | 'clue-reveal' | 'report';
+  gamePhase: 'intro' | 'player-info' | 'exploring' | 'statue' | 'questions' | 'clue-reveal' | 'report' | 'cinematic';
   currentStatueIndex: number;
   statueOrder: ElementType[];
   statueProgress: Record<ElementType, StatueProgress>;
@@ -29,6 +32,10 @@ interface GameState {
   showClue: boolean;
   clueText: string;
   playerInfo: PlayerInfo | null;
+  waterPhase: WaterPhase;
+  firePhase: FirePhase;
+  animalsMigrating: boolean;
+  explorationTimer: number;
   
   // Actions
   startGame: () => void;
@@ -44,6 +51,11 @@ interface GameState {
   hideClue: () => void;
   goToReport: () => void;
   resetGame: () => void;
+  setWaterPhase: (phase: WaterPhase) => void;
+  setFirePhase: (phase: FirePhase) => void;
+  setAnimalsMigrating: (v: boolean) => void;
+  triggerCinematic: (element: ElementType) => void;
+  endCinematic: () => void;
 }
 
 const initialStatueProgress: Record<ElementType, StatueProgress> = {
@@ -64,6 +76,10 @@ export const useGameStore = create<GameState>((set, get) => ({
   showClue: false,
   clueText: '',
   playerInfo: null,
+  waterPhase: 'forest_roam' as WaterPhase,
+  firePhase: 'exploring' as FirePhase,
+  animalsMigrating: false,
+  explorationTimer: 0,
 
   startGame: () => set({ gamePhase: 'player-info' }),
 
@@ -142,6 +158,30 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   goToReport: () => set({ gamePhase: 'report' }),
 
+  setWaterPhase: (phase) => set({ waterPhase: phase }),
+  setFirePhase: (phase) => set({ firePhase: phase }),
+  setAnimalsMigrating: (v) => set({ animalsMigrating: v }),
+
+  triggerCinematic: (element) => {
+    if (element === 'water') {
+      set({ gamePhase: 'cinematic', waterPhase: 'cinematic_ocean' });
+    } else if (element === 'fire') {
+      set({ gamePhase: 'cinematic', firePhase: 'cinematic_fire' });
+    }
+  },
+
+  endCinematic: () => {
+    const state = get();
+    const currentElement = state.statueOrder[state.currentStatueIndex];
+    set({
+      gamePhase: 'statue',
+      statueProgress: {
+        ...state.statueProgress,
+        [currentElement]: { ...state.statueProgress[currentElement], found: true },
+      },
+    });
+  },
+
   resetGame: () => set({
     gamePhase: 'intro',
     currentStatueIndex: 0,
@@ -151,5 +191,9 @@ export const useGameStore = create<GameState>((set, get) => ({
     showClue: false,
     clueText: '',
     playerInfo: null,
+    waterPhase: 'forest_roam',
+    firePhase: 'exploring',
+    animalsMigrating: false,
+    explorationTimer: 0,
   }),
 }));

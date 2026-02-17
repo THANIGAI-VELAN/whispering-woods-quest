@@ -8,13 +8,18 @@ export function GameHUD() {
     currentStatueIndex, 
     statueOrder, 
     statueProgress,
-    playerPosition 
+    playerPosition,
+    animalsMigrating,
+    waterPhase,
   } = useGameStore();
   
   if (gamePhase !== 'exploring') return null;
   
   const currentElement = statueOrder[currentStatueIndex];
   const riddle = statueRiddles[currentElement];
+
+  // Show migration hint for water chapter
+  const showMigrationHint = currentElement === 'water' && animalsMigrating && waterPhase === 'animals_migrate';
   
   const completedCount = Object.values(statueProgress).filter(s => s.completed).length;
   
@@ -63,13 +68,24 @@ export function GameHUD() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
-        key={currentElement}
+        key={currentElement + (showMigrationHint ? '-migrate' : '')}
       >
         <div className="glass-panel p-4 rounded-lg text-center">
-          <p className="text-xs text-primary font-display mb-1">🧩 Riddle</p>
-          <p className="text-sm text-muted-foreground font-body italic">
-            "{riddle}"
-          </p>
+          {showMigrationHint ? (
+            <>
+              <p className="text-xs text-water font-display mb-1">🦌 The animals are moving!</p>
+              <p className="text-sm text-muted-foreground font-body italic">
+                "All the creatures are heading east... Follow them to discover what they seek!"
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="text-xs text-primary font-display mb-1">🧩 Riddle</p>
+              <p className="text-sm text-muted-foreground font-body italic">
+                "{riddle}"
+              </p>
+            </>
+          )}
         </div>
       </motion.div>
       

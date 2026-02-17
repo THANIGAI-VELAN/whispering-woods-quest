@@ -75,6 +75,20 @@ export function PlayerController() {
     
     // Update player position in store
     movePlayer(camera.position.x, camera.position.z);
+
+    // Chapter triggers based on position
+    const state = useGameStore.getState();
+    const currentElement = state.statueOrder[state.currentStatueIndex];
+
+    // Water chapter: when player reaches east edge (x > 35) and animals are migrating
+    if (currentElement === 'water' && state.animalsMigrating && camera.position.x > 35) {
+      state.triggerCinematic('water');
+    }
+
+    // Fire chapter: when player reaches south edge (z > 35) after water is done
+    if (currentElement === 'fire' && camera.position.z > 35) {
+      state.triggerCinematic('fire');
+    }
   });
   
   // Set initial camera position
