@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useGameStore } from '@/store/gameStore';
-import { statueClues, statueRiddles } from '@/data/questions';
+import { statueRiddles } from '@/data/questions';
 
 export function GameHUD() {
   const { 
@@ -10,16 +10,15 @@ export function GameHUD() {
     statueProgress,
     playerPosition,
     animalsMigrating,
-    waterPhase,
   } = useGameStore();
   
-  if (gamePhase !== 'exploring') return null;
+  const isExploring = gamePhase === 'exploring' || gamePhase === 'exploring_underwater' || gamePhase === 'exploring_madurai';
+  if (!isExploring) return null;
   
   const currentElement = statueOrder[currentStatueIndex];
   const riddle = statueRiddles[currentElement];
 
-  // Show migration hint for water chapter
-  const showMigrationHint = currentElement === 'water' && animalsMigrating && waterPhase === 'animals_migrate';
+  const showMigrationHint = currentElement === 'water' && animalsMigrating && gamePhase === 'exploring';
   
   const completedCount = Object.values(statueProgress).filter(s => s.completed).length;
   

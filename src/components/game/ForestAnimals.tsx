@@ -82,14 +82,13 @@ function Rabbit({ position, rotation, scale }: { position: THREE.Vector3; rotati
 }
 
 export function ForestAnimals() {
-  const { animalsMigrating, waterPhase, currentStatueIndex } = useGameStore();
+  const { animalsMigrating, currentStatueIndex, gamePhase } = useGameStore();
   const animalsRef = useRef<AnimalData[]>([]);
   const groupRef = useRef<THREE.Group>(null);
   const migrationStarted = useRef(false);
   const elapsedSinceExplore = useRef(0);
 
-  // Only show animals during water chapter
-  const showAnimals = currentStatueIndex === 0 && (waterPhase === 'forest_roam' || waterPhase === 'animals_migrate');
+  const showAnimals = currentStatueIndex === 0 && gamePhase === 'exploring';
 
   const animals = useMemo(() => {
     const data: AnimalData[] = [];
@@ -113,8 +112,8 @@ export function ForestAnimals() {
   useFrame((_, delta) => {
     if (!showAnimals) return;
     
-    const { gamePhase, setAnimalsMigrating, setWaterPhase } = useGameStore.getState();
-    if (gamePhase !== 'exploring') return;
+    const { gamePhase: gp, setAnimalsMigrating } = useGameStore.getState();
+    if (gp !== 'exploring') return;
 
     elapsedSinceExplore.current += delta;
 
@@ -122,7 +121,6 @@ export function ForestAnimals() {
     if (elapsedSinceExplore.current > 10 && !migrationStarted.current) {
       migrationStarted.current = true;
       setAnimalsMigrating(true);
-      setWaterPhase('animals_migrate');
     }
 
     animalsRef.current.forEach((animal) => {
